@@ -77,74 +77,64 @@ class Parser:
                         "name":"NEO",
                         "children"[
                                 {"""
+
+        es = ""
+        em = ""
+        el = ""
+        eu = ""
+        ns = ""
+        nm = ""
+        nl = ""
+        nu = ""
+        ts = ""
+        tm = ""
+        tl = ""
+        tu = ""
+        fs = ""
+        fm = ""
+        fl = ""
+        fu = ""
         
-        """
-        for element in the_Data:
-            if match("^17[0-9]{2}",element["first_obs"]) != None:
-                if element["spec"] in eighteenth_Century:
-                    eighteenth_Century[element["spec"]].append(element)
-                else:
-                    eighteenth_Century[element["spec"]] = []
-                    eighteenth_Century[element["spec"]].append(element)
-            elif match("^18[0-9]{2}",element["first_obs"]) != None:
-                if element["spec"] in nineteenth_Century:
-                    nineteenth_Century[element["spec"]].append(element)
-                else:
-                    nineteenth_Century[element["spec"]] = []
-                    nineteenth_Century[element["spec"]].append(element)
-            elif match("^19[0-9]{2}",element["first_obs"]) != None:
-                if element["spec"] in twentieth_Century:
-                    twentieth_Century[element["spec"]].append(element)
-                else:
-                    twentieth_Century[element["spec"]] = []
-                    twentieth_Century[element["spec"]].append(element)
-            elif match("^20[0-9]{2}",element["first_obs"]) != None:
-                if element["spec"] in twentyfirst_Century:
-                    twentyfirst_Century[element["spec"]].append(element)
-                else:
-                    twentyfirst_Century[element["spec"]] = []
-                    twentyfirst_Century[element["spec"]].append(element)"""
-
 
         for element in the_Data:
             if match("^17[0-9]{2}",element["first_obs"]) != None:
-                eighteenth_Century.append(element)
+                if element["diameter"] == "":
+                    eu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] >100:
+                    el += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] > 15:
+                    em += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                else:
+                    es += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
             elif match("^18[0-9]{2}",element["first_obs"]) != None:
-                nineteenth_Century.append(element)
+                if element["diameter"] == "":
+                    nu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] >100:
+                    nl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] > 15:
+                    nm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                else:
+                    ns += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
             elif match("^19[0-9]{2}",element["first_obs"]) != None:
-                twentieth_Century.append(element)
+                if element["diameter"] == "":
+                    tu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] >100:
+                    tl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] > 15:
+                    tm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                else:
+                    ts += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
             elif match("^20[0-9]{2}",element["first_obs"]) != None:
-                twentyfirst_Century.append(element)
+                if element["diameter"] == "":
+                    fu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] >100:
+                    fl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] > 15:
+                    fm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                else:
+                    fs += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
 
-
-
-        json += """"name":"18th Century",
-            "children":["""
-        for element in eighteenth_Century:
-        #json += """{"name":""" + '"' + element["name"] + '"' + ""","Perihelion":""" + '"' + element["q"]  + '"' """}"""
-            json += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-        json += ']}'
-        json += """"name":"19th Century",
-            "children":["""
-        for element in nineteenth_Century:
-            json += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-        json += ']}'
-        json += """"name":"20th Century",
-            "children":["""
-        for element in twentieth_Century:
-            json += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-        json += ']}'
-        json += """"name":"21st Century",
-            "children":["""
-        for element in twentyfirst_Century:
-            json += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-        json += ']}]}}'
-
-        print json
-
-
-
-
+        print fu
 
 
 if __name__ == "__main__":
