@@ -4,11 +4,17 @@
 <script src="{% static "sunburst/js/vendor/d3/d3.js" %}"></script>
 </head>
 <body>
-<form>
-  <label><input type="radio" name="mode" value="size"> Size</label>
-  <label><input type="radio" name="mode" value="count" checked> Count</label>
-</form>
-<div id="plot"></div>
-<script src="{% static "sunburst/js/neovi_sunburst.js" %}"></script>
+	<form>
+		<label><input type="radio" name="mode" value="size">
+			Size</label> <label><input type="radio" name="mode" value="count"
+			checked> Count</label>
+	</form>
+	<div id="plot">
+		<div id="explanation" style="visibility: hidden;">
+			<span id="percentage"></span><br /> of visits begin with this
+			sequence of pages
+		</div>
+	</div>
+	<script src="{% static "sunburst/js/neovi_sunburst.js" %}"></script>
 </body>
 </html>
