@@ -78,6 +78,7 @@ class Parser:
                         "children"[
                                 {"""
 
+        #century size i.e. es = eighteenth centruy small
         es = ""
         em = ""
         el = ""
@@ -134,7 +135,7 @@ class Parser:
                 else:
                     fs += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
 
-        print fu
+
 
 
 if __name__ == "__main__":
