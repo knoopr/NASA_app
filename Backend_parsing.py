@@ -1,5 +1,6 @@
 import json
 from urllib2 import urlopen
+from re import match
 
 class Data_Grabber:
     def __init__ (self):
@@ -56,13 +57,83 @@ class Parser:
         self.Grab_data()
 
     def Grab_data(self):
-        the_Data = Data_Grabber().Request_json("q>=1")
-        """the_Data = Data_Grabber().Read_file()
-        average_Q = 0
+        #the_Data = Data_Grabber().Request_json("q>=1")
+        the_Data = Data_Grabber().Read_file()
+        """average_Q = 0
         for element in the_Data:
             average_Q += element["q"]
-        average_Q /= len(the_Data)-1
+        average_Q /= len(the_Data)
         print average_Q"""
+        self.config_Output(the_Data)
+
+    def config_Output(self, the_Data):
+        total_Q = 0
+        eighteenth_Century = []
+        nineteenth_Century = []
+        twentieth_Century = []
+        twentyfirst_Century = []
+        
+        json = """{
+                        "name":"NEO",
+                        "children"[
+                                {"""
+
+        #century size i.e. es = eighteenth centruy small
+        es = ""
+        em = ""
+        el = ""
+        eu = ""
+        ns = ""
+        nm = ""
+        nl = ""
+        nu = ""
+        ts = ""
+        tm = ""
+        tl = ""
+        tu = ""
+        fs = ""
+        fm = ""
+        fl = ""
+        fu = ""
+        
+
+        for element in the_Data:
+            if match("^17[0-9]{2}",element["first_obs"]) != None:
+                if element["diameter"] == "":
+                    eu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] >100:
+                    el += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] > 15:
+                    em += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                else:
+                    es += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+            elif match("^18[0-9]{2}",element["first_obs"]) != None:
+                if element["diameter"] == "":
+                    nu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] >100:
+                    nl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] > 15:
+                    nm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                else:
+                    ns += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+            elif match("^19[0-9]{2}",element["first_obs"]) != None:
+                if element["diameter"] == "":
+                    tu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] >100:
+                    tl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] > 15:
+                    tm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                else:
+                    ts += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+            elif match("^20[0-9]{2}",element["first_obs"]) != None:
+                if element["diameter"] == "":
+                    fu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] >100:
+                    fl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                elif element["diameter"] > 15:
+                    fm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                else:
+                    fs += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
 
 
 
