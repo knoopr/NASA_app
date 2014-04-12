@@ -10,38 +10,42 @@ class Data_Grabber:
             json_Data = json.load(fp)
             return json_Data
 
-    def Request_json(self, request):
+    def Request_json(self, request, url="http://www.asterank.com/api/asterank?query="):
         query = "{"
-        request_Elements = request.split(",")
+        request_Elements = request.replace(" ", "").split(",")
         for element in request_Elements:
-            if ">=" in element:
+            if element == "" :
+                break
+            elif ">=" in element:
                 variable, value = element.split(">=")
                 if query != "{":
                     query += ','
-                query += '"' + variable + '"' + """{"$gte":""" + str(value) + "}"
+                query += '"' + variable + '":' + """{"$gte":""" + str(value) + "}"
             elif ">" in element:
                 variable, value = element.split(">")
                 if query != "{":
                     query += ','
-                query += '"' + variable + '"' + """{"$gt":""" + str(value) + "}"
+                query += '"' + variable + '":' + """{"$gt":""" + str(value) + "}"
             elif "<=" in element:
                 variable, value = element.split("<=")
                 if query != "{":
                     query += ','
-                query += '"' + variable + '"' + """{"$lte":""" + str(value) + "}"
+                query += '"' + variable + '":' + """{"$lte":""" + str(value) + "}"
             elif "<" in element:
                 variable, value = element.split("<")
                 if query != "{":
                     query += ','
-                query += '"' + variable + '"' + """{"$lt":""" + str(value) + "}"
+                query += '"' + variable + '":' + """{"$lt":""" + str(value) + "}"
             elif "=" in element:
                 variable, value = element.split("=")
                 if query != "{":
                     query += ','
-                query += '"' + variable + '"' + """{"$e":""" + str(value) + "}"
-
+                query += '"' + variable + '":' + """{"$e":""" + str(value) + "}"
         query += "}"
-        print query
+        get_Request = url + query + "&limit=1000"
+        json_Data = json.load(urlopen(get_Request))
+        return json_Data
+
 
 
 
@@ -52,7 +56,7 @@ class Parser:
         self.Grab_data()
 
     def Grab_data(self):
-        the_Data = Data_Grabber().Request_json("test>=3,test2 < 3 ")
+        the_Data = Data_Grabber().Request_json("q>=1")
         """the_Data = Data_Grabber().Read_file()
         average_Q = 0
         for element in the_Data:
