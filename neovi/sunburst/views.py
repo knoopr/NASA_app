@@ -1,6 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse("Hello, world.")
+    text_for_page = "Text from view code"
+    context = {
+        'text_for_page': text_for_page,
+    }
+    return render(request, 'sunburst/index.html', context)
