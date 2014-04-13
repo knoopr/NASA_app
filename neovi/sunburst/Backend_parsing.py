@@ -1,5 +1,5 @@
 import json
-from urllib2 import urlopen
+from urllib3 import PoolManager
 from re import match
 import sqlite3
 
@@ -8,9 +8,21 @@ class Data_Grabber:
         self.data = None
 
     def Read_file(self):
-        with open("qlt5pn3.txt", "r") as fp:
-            json_Data = json.load(fp)
-            return json_Data
+        # TODO Fix, this is lazy. Now it's super-lazy due to panicked last-minute integration
+        try:
+            # Path on heroku
+            with open("neovi/sunburst/static/sunburst/json/qlt5pn3.txt", "r") as fp:
+                json_Data = json.load(fp)
+        except FileNotFoundError:
+            try:
+                # Path on localhost loaded in django context
+                with open("sunburst/static/sunburst/json/qlt5pn3.txt", "r") as fp:
+                    json_Data = json.load(fp)
+            except FileNotFoundError:
+                # Path when executing main method
+                with open("qlt5pn3.txt", "r") as fp:
+                    json_Data = json.load(fp)
+        return json_Data
 
     def Request_json(self, request, url="http://www.asterank.com/api/asterank?query="):
         query = "{"
@@ -45,7 +57,8 @@ class Data_Grabber:
                 query += '"' + variable + '":' + """{"$e":""" + str(value) + "}"
         query += "}"
         get_Request = url + query + "&limit=1000"
-        json_Data = json.load(urlopen(get_Request))
+        manager = PoolManager()
+        json_Data = json.load(manager.urlopen(get_Request))
         return json_Data
 
 
@@ -54,7 +67,7 @@ class Data_Grabber:
 
 
 class Parser:
-    def __init__(self):
+    def __init__(self, heirJson=None):
         self.Grab_data()
 
     def Grab_data(self):
@@ -113,7 +126,8 @@ class Parser:
         json = json[:-1]
         json += "\n]}"
         
-        print json
+        print (json)
+        self.hierJson = json
 
         operator.close()
         database.close()
