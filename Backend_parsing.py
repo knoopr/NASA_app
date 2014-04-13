@@ -1,6 +1,7 @@
 import json
 from urllib2 import urlopen
 from re import match
+import sqlite3
 
 class Data_Grabber:
     def __init__ (self):
@@ -68,75 +69,40 @@ class Parser:
 
     def config_Output(self, the_Data):
         total_Q = 0
-        eighteenth_Century = []
-        nineteenth_Century = []
-        twentieth_Century = []
-        twentyfirst_Century = []
         
-        json = """{
-                        "name":"NEO",
-                        "children"[
-                                {"""
-
-        #century size i.e. es = eighteenth centruy small
-        es = ""
-        em = ""
-        el = ""
-        eu = ""
-        ns = ""
-        nm = ""
-        nl = ""
-        nu = ""
-        ts = ""
-        tm = ""
-        tl = ""
-        tu = ""
-        fs = ""
-        fm = ""
-        fl = ""
-        fu = ""
+        database = sqlite3.connect("Asteroid.db")
+        database.text_factory = str
+        operator = database.cursor()
+        operator.execute("CREATE TABLE IF NOT EXISTS NEO(CENTURY, SPEC, AU, SIZE, NAME UNIQUE)")
         
-
         for element in the_Data:
             if match("^17[0-9]{2}",element["first_obs"]) != None:
-                if element["diameter"] == "":
-                    eu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                elif element["diameter"] >100:
-                    el += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                elif element["diameter"] > 15:
-                    em += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                else:
-                    es += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                the_Century = 1700
             elif match("^18[0-9]{2}",element["first_obs"]) != None:
-                if element["diameter"] == "":
-                    nu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                elif element["diameter"] >100:
-                    nl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                elif element["diameter"] > 15:
-                    nm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                else:
-                    ns += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                the_Century = 1800
             elif match("^19[0-9]{2}",element["first_obs"]) != None:
-                if element["diameter"] == "":
-                    tu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                elif element["diameter"] >100:
-                    tl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                elif element["diameter"] > 15:
-                    tm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                else:
-                    ts += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                the_Century = 1900
             elif match("^20[0-9]{2}",element["first_obs"]) != None:
-                if element["diameter"] == "":
-                    fu += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                elif element["diameter"] >100:
-                    fl += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                elif element["diameter"] > 15:
-                    fm += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
-                else:
-                    fs += """{"name":"%s","Perihelion":"%s"}"""% (element["name"], element["q"])
+                the_Century = 2000
+    
+            if element["diameter"] == "":
+                the_Size = "unknown"
+            elif element["diameter"] > 100:
+                the_Size = "large"
+            elif element["diameter"] > 15:
+                the_Size = "medium"
+            else:
+                the_Size = "small"
+                    
+            sql = "INSERT OR REPLACE INTO NEO VALUES (%d, '%s', %s, '%s','%s')"% (the_Century, element["spec"], element["q"], the_Size, element["full_name"])
+            operator.execute(sql)
 
+        operator.execute("SELECT * FROM NEO")
+        string = operator.fetchall()
+        print string
 
-
+        operator.close()
+        database.close()
 
 if __name__ == "__main__":
     Parser()
