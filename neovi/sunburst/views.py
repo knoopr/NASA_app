@@ -11,5 +11,6 @@ def index(request):
     return render(request, 'sunburst/index.html', context)
 
 def asterank_json(request):
-    parser = Parser()
-    return HttpResponse(parser.hierJson, content_type='application/json', )
+    with open("sunburst/static/sunburst/json/Parser_Output.txt", "r") as fp:
+        json_Data = json.load(fp)
+    return HttpResponse(json.dumps(json_Data, indent=1, separators=(',', ': ')), content_type='application/json', )
