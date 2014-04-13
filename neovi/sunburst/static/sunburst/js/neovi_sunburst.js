@@ -55,7 +55,7 @@ function mouseover(d) {
 	var percentage = (100 * d.value / totalSize).toPrecision(3);
 	
 	var percentageString = percentage + "%";
-	var descriptionString = "of near-eart objects "
+	var descriptionString = "of near-earth objects ";
 	
 	// Step through the ancestors' features
 	sequenceArray.forEach(function(element, index, array) {
