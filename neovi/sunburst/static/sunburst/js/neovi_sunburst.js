@@ -4,6 +4,9 @@ var height = 700;
 var radius = Math.min(width, height) / 2;
 var color = d3.scale.category20c();
 
+// Total size of all segments; we set this later, after loading the data.
+var totalSize = 0;
+
 // Append the SVG element to DOM element
 var svg = d3.select("#plot").append("svg").attr("width", width).attr("height",
 		height).append("g").attr("transform",
@@ -29,12 +32,17 @@ d3.json("/sunburst/asterank_json", function(error, root) {
 			.append("path").attr("display", function(d) {
 				return d.depth ? null : "none";
 			}) // hide inner ring
-			.attr("d", arc).style("stroke", "#fff").style("fill", function(d) {
-				return color((d.children ? d : d.parent).name);
-			}).each(stash).style("opacity", 1).on("mouseover", mouseover);
+			.attr("d", arc).style("stroke", "#fff").style("fill",
+					function(d) {
+						return color((d.children ? d : d.parent).name);
+					}).each(stash).style("opacity", 1).on("mouseover",
+					mouseover);
 
 	// Add the mouseleave handler to the bounding circle.
 	d3.select("#plot").on("mouseleave", mouseleave);
+
+	// Get total size of the tree = value of root node from partition.
+	totalSize = path.node().__data__.value;
 
 	d3.selectAll("input").on(
 			"change",
@@ -52,17 +60,37 @@ d3.json("/sunburst/asterank_json", function(error, root) {
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
 function mouseover(d) {
-	// var percentage = (100 * d.value / totalSize).toPrecision(3);
-	// var percentageString = percentage + "%";
-	// if (percentage < 0.1) {
-	// percentageString = "< 0.1%";
-	// }
+	var sequenceArray = getAncestors(d);
+	var percentage = (100 * d.value / totalSize).toPrecision(3);
+	
+	var percentageString = percentage + "% of asteroids ";
+	
+	// Step through the ancestors' features
+	sequenceArray.forEach(function(element, index, array) {
+		if (element.feature != null) {
+			// Add the "and" conjunction only on last element
+			if (index == (array.length - 1) && array.length > 1) {
+				percentageString += " and ";
+			}
+			
+			// Translate meaning of feature to English
+			if (element.feature == "spectra") {
+				percentageString += "are spectral type " + element.name;
+			} else if (element.feature == "discovery") {
+				percentageString += "were discovered in the " + element.name;
+			}
+			
+			// Oxford comma... yeah
+			if (index < (array.length - 1) && array.length > 2) {
+				percentageString += ", ";
+			}
+		}
+	});
 
-	d3.select("#percentage").text("100%");
-
+	d3.select("#percentage").text(percentageString);
 	d3.select("#explanation").style("visibility", "");
 
-	var sequenceArray = getAncestors(d);
+	
 	// updateBreadcrumbs(sequenceArray, percentageString);
 
 	// Fade all the segments.

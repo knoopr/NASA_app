@@ -10,7 +10,8 @@
       {"name": "Asteroid 1", "size": 3938},
       {"name": "Asteroid 2", "size": 3812},
       {"name": "Asteroid 3", "size": 6714}
-     ]
+     ],
+     "feature": "spectra"
     },
     {
      "name": "S-type",
@@ -22,7 +23,8 @@
       {"name": "Asteroid 6", "size": 5731},
       {"name": "Asteroid 7", "size": 7840},
       {"name": "Asteroid 8", "size": 5914}
-     ]
+     ],
+     "feature": "spectra"
     },
     {
      "name": "X-group",
@@ -49,9 +51,11 @@
       {"name": "Asteroid 28", "size": 5731},
       {"name": "Asteroid 29", "size": 7840},
       {"name": "Asteroid 30", "size": 5914}
-     ]
+     ],
+     "feature": "spectra"
     }
-   ]
+   ],
+   "feature": "discovery"
   },
   {
    "name": "1900s",
@@ -62,7 +66,8 @@
       {"name": "Asteroid 31", "size": 3938},
       {"name": "Asteroid 32", "size": 3812},
       {"name": "Asteroid 33", "size": 6714}
-     ]
+     ],
+     "feature": "spectra"
     },
     {
      "name": "S-type",
@@ -75,15 +80,18 @@
       {"name": "Asteroid 39", "size": 7840},
       {"name": "Asteroid 40", "size": 5914},
       {"name": "Asteroid 41", "size": 3416}
-     ]
+     ],
+     "feature": "spectra"
     },
     {
      "name": "X-group",
      "children": [
       {"name": "Asteroid 42", "size": 7074}
-     ]
+     ],
+     "feature": "spectra"
     }
-   ]
+   ],
+   "feature": "discovery"
   },
   {
    "name": "2000s",
@@ -92,15 +100,18 @@
      "name": "C-group",
      "children": [
       {"name": "Asteroid 43", "size": 3938}
-     ]
+     ],
+     "feature": "spectra"
     },
     {
      "name": "S-type",
      "children": [
       {"name": "BetweennessCentrality", "size": 3534}
-     ]
+     ],
+     "feature": "spectra"
     }
-   ]
+   ],
+   "feature": "discovery"
   }
  ]
 }
