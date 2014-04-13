@@ -11,6 +11,14 @@ def index(request):
     return render(request, 'sunburst/index.html', context)
 
 def asterank_json(request):
-    with open("sunburst/static/sunburst/json/Parser_Output.txt", "r") as fp:
-        json_Data = json.load(fp)
+        # TODO Fix, this is lazy
+    try:
+        # Path on heroku
+        with open("neovi/sunburst/static/sunburst/json/Parser_Output.txt", "r") as fp:
+            json_Data = json.load(fp)
+        break
+    except FileNotFoundError:
+        # Path on localhost
+        with open("sunburst/static/sunburst/json/Parser_Output.txt", "r") as fp:
+            json_Data = json.load(fp)
     return HttpResponse(json.dumps(json_Data, indent=1, separators=(',', ': ')), content_type='application/json', )
