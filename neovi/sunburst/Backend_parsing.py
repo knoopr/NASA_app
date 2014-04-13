@@ -39,26 +39,36 @@ class Data_Grabber:
                 variable, value = element.split(">=")
                 if query != "{":
                     query += ','
+                if value[0] == ".":
+                    value = "0" + value
                 query += '"' + variable + '":' + """{"$gte":""" + str(value) + "}"
             elif ">" in element:
                 variable, value = element.split(">")
                 if query != "{":
                     query += ','
+                if value[0] == ".":
+                    value = "0" + value
                 query += '"' + variable + '":' + """{"$gt":""" + str(value) + "}"
             elif "<=" in element:
                 variable, value = element.split("<=")
                 if query != "{":
                     query += ','
+                if value[0] == ".":
+                    value = "0" + value
                 query += '"' + variable + '":' + """{"$lte":""" + str(value) + "}"
             elif "<" in element:
                 variable, value = element.split("<")
                 if query != "{":
                     query += ','
+                if value[0] == ".":
+                    value = "0" + value
                 query += '"' + variable + '":' + """{"$lt":""" + str(value) + "}"
             elif "=" in element:
                 variable, value = element.split("=")
                 if query != "{":
                     query += ','
+                if value[0] == ".":
+                    value = "0" + value
                 query += '"' + variable + '":' + """{"$e":""" + str(value) + "}"
         query += "}"
         get_Request = url + query + "&limit=1000"
@@ -66,7 +76,10 @@ class Data_Grabber:
             manager = PoolManager()
             json_Data = json.load(manager.urlopen(get_Request))
         except:
-            json_Data = json.load(urlopen(get_Request))
+            try:
+                json_Data = json.load(urlopen(get_Request))
+            except:
+                print get_Request
         return json_Data
 
 
@@ -79,8 +92,9 @@ class Parser:
         self.Grab_data()
 
     def Grab_data(self):
-        #the_Data = Data_Grabber().Request_json("q>=1")
+        the_Data = Data_Grabber().Request_json("q>.005, q<.0075")
         the_Data = Data_Grabber().Read_file()
+        print the_Data
         """average_Q = 0
         for element in the_Data:
             average_Q += element["q"]
@@ -97,6 +111,8 @@ class Parser:
         
         
         for element in the_Data:
+            if match("^16[0-9]{2}",element["first_obs"]) != None:
+                the_Century = 1600
             if match("^17[0-9]{2}",element["first_obs"]) != None:
                 the_Century = 1700
             elif match("^18[0-9]{2}",element["first_obs"]) != None:
@@ -105,6 +121,7 @@ class Parser:
                 the_Century = 1900
             elif match("^20[0-9]{2}",element["first_obs"]) != None:
                 the_Century = 2000
+    
     
             if element["diameter"] == "":
                 the_Size = "unknown"
@@ -115,6 +132,7 @@ class Parser:
             else:
                 the_Size = "small"
             
+            """
             if element["q"] < .0025:
                 the_Distance = "0 < .0025"
             elif element["q"] < .005:
@@ -125,9 +143,9 @@ class Parser:
                 the_Distance = ".0075 < .01"
             elif element["q"] > .01:
                 the_Distance = ".01 > "
-            
+            """
                     
-            sql = "INSERT OR REPLACE INTO NEO VALUES (%d, '%s', '%s', '%s','%s')"% (the_Century, element["spec"], the_Distance, the_Size, element["full_name"])
+            sql = "INSERT OR REPLACE INTO NEO VALUES (%d, '%s', %s, '%s','%s')"% (the_Century, element["spec"], element["q"], the_Size, element["full_name"])
             operator.execute(sql)
         
         
@@ -140,7 +158,7 @@ class Parser:
                 json += """\n{"name":"%s-type", "feature":"spectra", "children":["""%spec[0]
                 for size in asteroid_Sizes.execute("SELECT DISTINCT SIZE FROM NEO WHERE CENTURY=%d AND SPEC='%s'" %(century[0], spec[0])):
                     json += """\n{"name":"%s", "feature":"size", "children":[\n"""%size[0]
-                    for asteroid in operator.execute("SELECT AU, COUNT(*) FROM NEO WHERE CENTURY=%d AND SPEC='%s' AND SIZE='%s'" %(century[0], spec[0], size[0])):
+                    for asteroid in operator.execute("SELECT NAME, AU FROM NEO WHERE CENTURY=%d AND SPEC='%s' AND SIZE='%s'" %(century[0], spec[0], size[0])):
                         json += """{"name":"%s", "feature":"distance", "number":%s},\n"""%(asteroid[0], asteroid[1])
                     json = json[:-2]
                     json += "\n]},"
