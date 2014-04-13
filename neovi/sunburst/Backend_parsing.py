@@ -25,8 +25,15 @@ class Data_Grabber:
                     json_Data = json.load(fp)
             except IOError:
                 # Path when executing main method
-                with open("qlt5pn3.txt", "r") as fp:
-                    json_Data = json.load(fp)
+                try:
+                    with open("qlt5pn3.txt", "r") as fp:
+                        json_Data = json.load(fp)
+                except:
+                    try:
+                        with open("neovi/sunburst/qlt5pn3.txt", "r") as fp:
+                            json_Data = json.load(fp)
+                    except:
+                        return None
         return json_Data
 
     def Request_json(self, request, url="http://www.asterank.com/api/asterank?query="):
@@ -91,10 +98,14 @@ class Parser:
 
     def Grab_data(self):
         the_Data = Data_Grabber().Request_json("q>.005, q<.01")
-        temp = Data_Grabber().Request_json("q<1, diameter>0")
-        if temp != None:
-            the_Data += temp
-        the_Data += Data_Grabber().Read_file()
+        try:
+            the_Data += Data_Grabber().Request_json("q<1, diameter>0")
+        except:
+            None
+        try:
+            the_Data += Data_Grabber().Read_file()
+        except:
+            None
         """average_Q = 0
         for element in the_Data:
             average_Q += element["q"]
