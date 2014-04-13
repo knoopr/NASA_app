@@ -62,11 +62,11 @@ class Data_Grabber:
                 query += '"' + variable + '":' + """{"$e":""" + str(value) + "}"
         query += "}"
         get_Request = url + query + "&limit=1000"
-        try{
+        try:
             manager = PoolManager()
             json_Data = json.load(manager.urlopen(get_Request))
-        }
         except:
+            json_Data = json.load(urlopen(get_Request))
         return json_Data
 
 
@@ -114,8 +114,20 @@ class Parser:
                 the_Size = "medium"
             else:
                 the_Size = "small"
+            
+            if element["q"] < .0025:
+                the_Distance = "0 < .0025"
+            elif element["q"] < .005:
+                the_Distance = ".0025 < .005"
+            elif element["q"] < .0075:
+                the_Distance = ".005 < .0075"
+            elif element["q"] < .01:
+                the_Distance = ".0075 < .01"
+            elif element["q"] > .01:
+                the_Distance = ".01 > "
+            
                     
-            sql = "INSERT OR REPLACE INTO NEO VALUES (%d, '%s', %s, '%s','%s')"% (the_Century, element["spec"], element["q"], the_Size, element["full_name"])
+            sql = "INSERT OR REPLACE INTO NEO VALUES (%d, '%s', '%s', '%s','%s')"% (the_Century, element["spec"], the_Distance, the_Size, element["full_name"])
             operator.execute(sql)
         
         
@@ -128,8 +140,8 @@ class Parser:
                 json += """\n{"name":"%s-type", "feature":"spectra", "children":["""%spec[0]
                 for size in asteroid_Sizes.execute("SELECT DISTINCT SIZE FROM NEO WHERE CENTURY=%d AND SPEC='%s'" %(century[0], spec[0])):
                     json += """\n{"name":"%s", "feature":"size", "children":[\n"""%size[0]
-                    for asteroid in operator.execute("SELECT NAME, AU FROM NEO WHERE CENTURY=%d AND SPEC='%s' AND SIZE='%s'" %(century[0], spec[0], size[0])):
-                        json += """{"name":"%s", "feature":"distance", "Perihelion":%s},\n"""%(asteroid[0], asteroid[1])
+                    for asteroid in operator.execute("SELECT AU, COUNT(*) FROM NEO WHERE CENTURY=%d AND SPEC='%s' AND SIZE='%s'" %(century[0], spec[0], size[0])):
+                        json += """{"name":"%s", "feature":"distance", "number":%s},\n"""%(asteroid[0], asteroid[1])
                     json = json[:-2]
                     json += "\n]},"
                 json = json[:-1]
