@@ -80,6 +80,7 @@ class Data_Grabber:
                 json_Data = json.load(urlopen(get_Request))
             except:
                 print get_Request
+                return None
         return json_Data
 
 
@@ -94,7 +95,6 @@ class Parser:
     def Grab_data(self):
         the_Data = Data_Grabber().Request_json("q>.005, q<.0075")
         the_Data = Data_Grabber().Read_file()
-        print the_Data
         """average_Q = 0
         for element in the_Data:
             average_Q += element["q"]
