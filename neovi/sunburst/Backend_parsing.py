@@ -70,6 +70,13 @@ class Data_Grabber:
                 if value[0] == ".":
                     value = "0" + value
                 query += '"' + variable + '":' + """{"$lt":""" + str(value) + "}"
+            elif "!=" in element:
+                variable, value = element.split("!=")
+                if query != "{":
+                    query += ','
+                if value[0] == ".":
+                    value = "0" + value
+                query += '"' + variable + '":' + """{"$ne":""" + str(value) + "}"
             elif "=" in element:
                 variable, value = element.split("=")
                 if query != "{":
@@ -98,6 +105,8 @@ class Parser:
 
     def Grab_data(self):
         the_Data = Data_Grabber().Request_json("q>.005, q<.01")
+        the_Data = Data_Grabber().Request_json("q>.25, q<.5, diameter>0")
+        the_Data = Data_Grabber().Request_json("q>.25, q<.5, spec!=0")
         try:
             the_Data += Data_Grabber().Request_json("q<1, diameter>0")
         except:
