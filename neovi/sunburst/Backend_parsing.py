@@ -76,7 +76,7 @@ class Data_Grabber:
         try:
             json_Data = json.load(urlopen(get_Request))
         except:
-            print get_Request
+            print (get_Request)
             return None
         return json_Data
 
