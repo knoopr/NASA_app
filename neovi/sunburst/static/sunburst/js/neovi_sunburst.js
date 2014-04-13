@@ -1,8 +1,8 @@
 // Set up initial plot sizes
-var width = 960;
+var width = 700;
 var height = 700;
 var radius = Math.min(width, height) / 2;
-var color = d3.scale.category20c();
+var color = d3.scale.category10();
 
 // Total size of all segments; we set this later, after loading the data.
 var totalSize = 0;
@@ -10,7 +10,7 @@ var totalSize = 0;
 // Append the SVG element to DOM element
 var svg = d3.select("#plot").append("svg").attr("width", width).attr("height",
 		height).append("g").attr("transform",
-		"translate(" + width / 2 + "," + height * .52 + ")");
+		"translate(" + width / 2 + "," + height / 2 + ")");
 
 var partition = d3.layout.partition().sort(null).size(
 		[ 2 * Math.PI, radius * radius ]).value(function(d) {
@@ -35,27 +35,14 @@ d3.json("/sunburst/asterank_json", function(error, root) {
 			.attr("d", arc).style("stroke", "#fff").style("fill",
 					function(d) {
 						return color((d.children ? d : d.parent).name);
-					}).each(stash).style("opacity", 1).on("mouseover",
+					}).style("opacity", 1).on("mouseover",
 					mouseover);
 
 	// Add the mouseleave handler to the bounding circle.
-	d3.select("#plot").on("mouseleave", mouseleave);
+	svg.on("mouseleave", mouseleave);
 
 	// Get total size of the tree = value of root node from partition.
 	totalSize = path.node().__data__.value;
-
-	d3.selectAll("input").on(
-			"change",
-			function change() {
-				var value = this.value === "count" ? function() {
-					return 1;
-				} : function(d) {
-					return d.size;
-				};
-
-				path.data(partition.value(value).nodes).transition().duration(
-						1500).attrTween("d", arcTween);
-			});
 });
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
@@ -63,35 +50,34 @@ function mouseover(d) {
 	var sequenceArray = getAncestors(d);
 	var percentage = (100 * d.value / totalSize).toPrecision(3);
 	
-	var percentageString = percentage + "% of asteroids ";
+	var percentageString = percentage + "%";
+	var descriptionString = "of asteroids "
 	
 	// Step through the ancestors' features
 	sequenceArray.forEach(function(element, index, array) {
 		if (element.feature != null) {
 			// Add the "and" conjunction only on last element
 			if (index == (array.length - 1) && array.length > 1) {
-				percentageString += " and ";
+				descriptionString += " and ";
 			}
 			
 			// Translate meaning of feature to English
 			if (element.feature == "spectra") {
-				percentageString += "are spectral type " + element.name;
+				descriptionString += "are spectral type " + element.name;
 			} else if (element.feature == "discovery") {
-				percentageString += "were discovered in the " + element.name;
+				descriptionString += "were discovered in the " + element.name;
 			}
 			
 			// Oxford comma... yeah
 			if (index < (array.length - 1) && array.length > 2) {
-				percentageString += ", ";
+				descriptionString += ", ";
 			}
 		}
 	});
 
 	d3.select("#percentage").text(percentageString);
+	d3.select("#descriptive_text").text(descriptionString);
 	d3.select("#explanation").style("visibility", "");
-
-	
-	// updateBreadcrumbs(sequenceArray, percentageString);
 
 	// Fade all the segments.
 	d3.selectAll("path").style("opacity", 0.3);
@@ -105,21 +91,17 @@ function mouseover(d) {
 // Restore everything to full opacity when moving off the visualization.
 function mouseleave(d) {
 
-	// Hide the breadcrumb trail
-	// d3.select("#trail")
-	// .style("visibility", "hidden");
-
 	// Deactivate all segments during transition.
 	d3.selectAll("path").on("mouseover", null);
 
 	// Transition each segment to full opacity and then reactivate it.
-	d3.selectAll("path").transition().duration(1000).style("opacity", 1).each(
+	d3.selectAll("path").transition().duration(500).style("opacity", 1).each(
 			"end", function() {
 				d3.select(this).on("mouseover", mouseover);
 			});
 
-	d3.select("#explanation").transition().duration(1000).style("visibility",
-			"hidden");
+//	d3.select("#explanation").transition().duration(500).style("visibility",
+//			"hidden");
 }
 
 // Given a node in a partition layout, return an array of all of its ancestor
@@ -132,26 +114,6 @@ function getAncestors(node) {
 		current = current.parent;
 	}
 	return path;
-}
-
-// Stash the old values for transition.
-function stash(d) {
-	d.x0 = d.x;
-	d.dx0 = d.dx;
-}
-
-// Interpolate the arcs in data space.
-function arcTween(a) {
-	var i = d3.interpolate({
-		x : a.x0,
-		dx : a.dx0
-	}, a);
-	return function(t) {
-		var b = i(t);
-		a.x0 = b.x;
-		a.dx0 = b.dx;
-		return arc(b);
-	};
 }
 
 d3.select(self.frameElement).style("height", height + "px");
