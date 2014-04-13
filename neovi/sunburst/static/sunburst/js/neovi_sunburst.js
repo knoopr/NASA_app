@@ -2,7 +2,7 @@
 var width = 700;
 var height = 700;
 var radius = Math.min(width, height) / 2;
-var color = d3.scale.category20c();
+var color = d3.scale.category20();
 
 // Total size of all segments; we set this later, after loading the data.
 var totalSize = 0;
@@ -55,7 +55,7 @@ function mouseover(d) {
 	var percentage = (100 * d.value / totalSize).toPrecision(3);
 	
 	var percentageString = percentage + "%";
-	var descriptionString = "of asteroids "
+	var descriptionString = "of near-eart objects "
 	
 	// Step through the ancestors' features
 	sequenceArray.forEach(function(element, index, array) {
@@ -67,7 +67,7 @@ function mouseover(d) {
 			
 			// Translate meaning of feature to English
 			if (element.feature == "spectra") {
-				descriptionString += "are spectral type " + element.name;
+				descriptionString += "are in the " + element.name + " spectrum";
 			} else if (element.feature == "discovery") {
 				descriptionString += "were discovered in the " + element.name;
 			} else if (element.feature == "size") {

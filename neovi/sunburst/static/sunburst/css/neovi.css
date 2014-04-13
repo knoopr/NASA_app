@@ -21,8 +21,8 @@ span#percentage {
 span#descriptive_text {
 	position: absolute;
 	top: 325px;
-	left: 200px;
-	width: 310px;
+	left: 210px;
+	width: 290px;
 	text-align: center;
 	font-size: 1.5em;
 }
