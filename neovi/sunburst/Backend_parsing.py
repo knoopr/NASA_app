@@ -55,6 +55,8 @@ class Data_Grabber:
                     query += ','
                 if value[0] == ".":
                     value = "0" + value
+                elif value.isdigit() == False:
+                    value = '"' + value + '"'
                 query += '"' + variable + '":' + """{"$gt":""" + str(value) + "}"
             elif "<=" in element:
                 variable, value = element.split("<=")
@@ -62,6 +64,8 @@ class Data_Grabber:
                     query += ','
                 if value[0] == ".":
                     value = "0" + value
+                elif value.isdigit() == False:
+                    value = '"' + value + '"'
                 query += '"' + variable + '":' + """{"$lte":""" + str(value) + "}"
             elif "<" in element:
                 variable, value = element.split("<")
@@ -69,6 +73,8 @@ class Data_Grabber:
                     query += ','
                 if value[0] == ".":
                     value = "0" + value
+                elif value.isdigit() == False:
+                    value = '"' + value + '"'
                 query += '"' + variable + '":' + """{"$lt":""" + str(value) + "}"
             elif "!=" in element:
                 variable, value = element.split("!=")
@@ -76,6 +82,8 @@ class Data_Grabber:
                     query += ','
                 if value[0] == ".":
                     value = "0" + value
+                if value.isdigit() == False:
+                    value = '"' + value + '"'
                 query += '"' + variable + '":' + """{"$ne":""" + str(value) + "}"
             elif "=" in element:
                 variable, value = element.split("=")
@@ -83,6 +91,8 @@ class Data_Grabber:
                     query += ','
                 if value[0] == ".":
                     value = "0" + value
+                elif value.isdigit() == False:
+                    value = '"' + value + '"'
                 query += '"' + variable + '":' + """{"$e":""" + str(value) + "}"
         query += "}"
         get_Request = url + query + "&limit=1000"
@@ -104,9 +114,14 @@ class Parser:
         self.Grab_data()
 
     def Grab_data(self):
-        the_Data = Data_Grabber().Request_json("q>.005, q<.01")
-        the_Data = Data_Grabber().Request_json("q>.25, q<.5, diameter>0")
-        the_Data = Data_Grabber().Request_json("q>.25, q<.5, spec!=0")
+        the_Data = []
+        the_Data += Data_Grabber().Request_json("q>.005, q<.01")
+        the_Data += Data_Grabber().Request_json("q<.25, diameter>0")
+        the_Data += Data_Grabber().Request_json("q<.2, spec!=comet")
+        the_Data += Data_Grabber().Request_json("q<.2, spec!=?")
+        the_Data += Data_Grabber().Request_json("q>.2, q<.4, diameter>0")
+        the_Data += Data_Grabber().Request_json("q>.2, q<.4, spec!=comet, spec!=?")
+        the_Data += Data_Grabber().Request_json("q>.2, q<.4")
         try:
             the_Data += Data_Grabber().Request_json("q<1, diameter>0")
         except:
