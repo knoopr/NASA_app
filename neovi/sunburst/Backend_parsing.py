@@ -122,7 +122,7 @@ class Parser:
                 for size in asteroid_Sizes.execute("SELECT DISTINCT SIZE FROM NEO WHERE CENTURY=%d AND SPEC='%s'" %(century[0], spec[0])):
                     json += """\n{"name":"%s", "feature":"size", "children":[\n"""%size[0]
                     for asteroid in operator.execute("SELECT NAME, AU FROM NEO WHERE CENTURY=%d AND SPEC='%s' AND SIZE='%s'" %(century[0], spec[0], size[0])):
-                        json += """{"name":"%s", "Perihelion":%s},\n"""%(asteroid[0], asteroid[1])
+                        json += """{"name":"%s", "feature":"distance", "Perihelion":%s},\n"""%(asteroid[0], asteroid[1])
                     json = json[:-2]
                     json += "\n]},"
                 json = json[:-1]
