@@ -91,7 +91,9 @@ class Parser:
 
     def Grab_data(self):
         the_Data = Data_Grabber().Request_json("q>.005, q<.01")
-        the_Data += Data_Grabber().Request_json("q<1, diameter>0")
+        temp = Data_Grabber().Request_json("q<1, diameter>0")
+        if temp != None:
+            the_Data += temp
         the_Data += Data_Grabber().Read_file()
         """average_Q = 0
         for element in the_Data:
