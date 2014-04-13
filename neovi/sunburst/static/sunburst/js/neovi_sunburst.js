@@ -2,7 +2,7 @@
 var width = 700;
 var height = 700;
 var radius = Math.min(width, height) / 2;
-var color = d3.scale.category10();
+var color = d3.scale.category20c();
 
 // Total size of all segments; we set this later, after loading the data.
 var totalSize = 0;
