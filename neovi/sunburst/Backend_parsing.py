@@ -1,5 +1,5 @@
 import json
-from urllib3 import PoolManager
+from urllib2 import urlopen
 from re import match
 import sqlite3
 
@@ -57,8 +57,9 @@ class Data_Grabber:
                 query += '"' + variable + '":' + """{"$e":""" + str(value) + "}"
         query += "}"
         get_Request = url + query + "&limit=1000"
-        manager = PoolManager()
-        json_Data = json.load(manager.urlopen(get_Request))
+        json_Data = json.load(urlopen(get_Request))
+        #manager = PoolManager()
+        #json_Data = json.load(manager.urlopen(get_Request))
         return json_Data
 
 
@@ -113,13 +114,18 @@ class Parser:
         
         centuries = database.cursor()
         spectrometer = database.cursor()
+        asteroid_Sizes = database.cursor()
         for century in centuries.execute("SELECT DISTINCT CENTURY FROM NEO"):
             json+= """\n{"name":"%s's", "feature":"discovery", "children":["""%century[0]
             for spec in spectrometer.execute("SELECT DISTINCT SPEC FROM NEO WHERE CENTURY=%d" %century[0]):
-                json += """\n{"name":"%s-type", "feature":"spectra", "children":[\n"""%spec[0]
-                for asteroid in operator.execute("SELECT NAME, AU FROM NEO WHERE CENTURY=%d AND SPEC='%s'" %(century[0], spec[0])):
-                    json += """{"name":"%s", "Perihelion":%s},\n"""%(asteroid[0], asteroid[1])
-                json = json[:-2]
+                json += """\n{"name":"%s-type", "feature":"spectra", "children":["""%spec[0]
+                for size in asteroid_Sizes.execute("SELECT DISTINCT SIZE FROM NEO WHERE CENTURY=%d AND SPEC='%s'" %(century[0], spec[0])):
+                    json += """\n{"name":"%s", "feature":"size", "children":[\n"""%size[0]
+                    for asteroid in operator.execute("SELECT NAME, AU FROM NEO WHERE CENTURY=%d AND SPEC='%s' AND SIZE='%s'" %(century[0], spec[0], size[0])):
+                        json += """{"name":"%s", "Perihelion":%s},\n"""%(asteroid[0], asteroid[1])
+                    json = json[:-2]
+                    json += "\n]},"
+                json = json[:-1]
                 json += "\n]},"
             json = json[:-1]
             json += "\n]},"
