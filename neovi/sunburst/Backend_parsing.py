@@ -195,10 +195,10 @@ class Parser:
         centuries = database.cursor()
         spectrometer = database.cursor()
         asteroid_Sizes = database.cursor()
-        for century in centuries.execute("SELECT DISTINCT CENTURY FROM NEO"):
-            json+= """\n{"name":"%s's", "feature":"discovery", "children":["""%century[0]
-            for spec in spectrometer.execute("SELECT DISTINCT SPEC FROM NEO WHERE CENTURY=%d" %century[0]):
-                json += """\n{"name":"%s-type", "feature":"spectra", "children":["""%spec[0]
+        for spec in spectrometer.execute("SELECT DISTINCT SPEC FROM NEO"):
+            json += """\n{"name":"%s-type", "feature":"spectra", "children":["""%spec[0]
+            for century in centuries.execute("SELECT DISTINCT CENTURY FROM NEO WHERE SPEC='%s'" % spec[0]):
+                json+= """\n{"name":"%s's", "feature":"discovery", "children":["""%century[0]
                 for size in asteroid_Sizes.execute("SELECT DISTINCT SIZE FROM NEO WHERE CENTURY=%d AND SPEC='%s'" %(century[0], spec[0])):
                     json += """\n{"name":"%s", "feature":"size", "children":[\n"""%size[0]
                     for asteroid in operator.execute("SELECT NAME, AU FROM NEO WHERE CENTURY=%d AND SPEC='%s' AND SIZE='%s'" %(century[0], spec[0], size[0])):
