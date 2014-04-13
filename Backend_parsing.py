@@ -68,12 +68,12 @@ class Parser:
         self.config_Output(the_Data)
 
     def config_Output(self, the_Data):
-        total_Q = 0
-        
+        json = """{"name":"Near Earth Objects", "children":["""
         database = sqlite3.connect("Asteroid.db")
         database.text_factory = str
         operator = database.cursor()
         operator.execute("CREATE TABLE IF NOT EXISTS NEO(CENTURY, SPEC, AU, SIZE, NAME UNIQUE)")
+        
         
         for element in the_Data:
             if match("^17[0-9]{2}",element["first_obs"]) != None:
@@ -96,10 +96,24 @@ class Parser:
                     
             sql = "INSERT OR REPLACE INTO NEO VALUES (%d, '%s', %s, '%s','%s')"% (the_Century, element["spec"], element["q"], the_Size, element["full_name"])
             operator.execute(sql)
-
-        operator.execute("SELECT * FROM NEO")
-        string = operator.fetchall()
-        print string
+        
+        
+        centuries = database.cursor()
+        spectrometer = database.cursor()
+        for century in centuries.execute("SELECT DISTINCT CENTURY FROM NEO"):
+            json+= """\n{"name":"%s's", "children":["""%century[0]
+            for spec in spectrometer.execute("SELECT DISTINCT SPEC FROM NEO WHERE CENTURY=%d" %century[0]):
+                json += """\n{"name":"%s-type","children":[\n"""%spec[0]
+                for asteroid in operator.execute("SELECT NAME, AU FROM NEO WHERE CENTURY=%d AND SPEC='%s'" %(century[0], spec[0])):
+                    json += """{"name":"%s", "Perihelion":%s},\n"""%(asteroid[0], asteroid[1])
+                json = json[:-2]
+                json += "\n]},"
+            json = json[:-1]
+            json += "\n]},"
+        json = json[:-1]
+        json += "\n]}"
+        
+        print json
 
         operator.close()
         database.close()
