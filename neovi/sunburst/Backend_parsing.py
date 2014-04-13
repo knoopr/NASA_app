@@ -13,12 +13,12 @@ class Data_Grabber:
             # Path on heroku
             with open("neovi/sunburst/static/sunburst/json/qlt5pn3.txt", "r") as fp:
                 json_Data = json.load(fp)
-        except FileNotFoundError:
+        except IOError:
             try:
                 # Path on localhost loaded in django context
                 with open("sunburst/static/sunburst/json/qlt5pn3.txt", "r") as fp:
                     json_Data = json.load(fp)
-            except FileNotFoundError:
+            except IOError:
                 # Path when executing main method
                 with open("qlt5pn3.txt", "r") as fp:
                     json_Data = json.load(fp)
