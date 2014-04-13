@@ -14,10 +14,10 @@ def asterank_json(request):
         # TODO Fix, this is lazy
     try:
         # Path on heroku
-        with open("neovi/sunburst/static/sunburst/json/Parser_Output.txt", "r") as fp:
+        with open("neovi/sunburst/static/sunburst/json/Parser_Output_specOuter.txt", "r") as fp:
             json_Data = json.load(fp)
     except FileNotFoundError:
         # Path on localhost
-        with open("sunburst/static/sunburst/json/Parser_Output.txt", "r") as fp:
+        with open("sunburst/static/sunburst/json/Parser_Output_specOuter.txt", "r") as fp:
             json_Data = json.load(fp)
     return HttpResponse(json.dumps(json_Data, indent=1, separators=(',', ': ')), content_type='application/json', )
