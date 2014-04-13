@@ -114,9 +114,9 @@ class Parser:
         centuries = database.cursor()
         spectrometer = database.cursor()
         for century in centuries.execute("SELECT DISTINCT CENTURY FROM NEO"):
-            json+= """\n{"name":"%s's", "children":["""%century[0]
+            json+= """\n{"name":"%s's", "feature":"discovery", "children":["""%century[0]
             for spec in spectrometer.execute("SELECT DISTINCT SPEC FROM NEO WHERE CENTURY=%d" %century[0]):
-                json += """\n{"name":"%s-type","children":[\n"""%spec[0]
+                json += """\n{"name":"%s-type", "feature":"spectra", "children":[\n"""%spec[0]
                 for asteroid in operator.execute("SELECT NAME, AU FROM NEO WHERE CENTURY=%d AND SPEC='%s'" %(century[0], spec[0])):
                     json += """{"name":"%s", "Perihelion":%s},\n"""%(asteroid[0], asteroid[1])
                 json = json[:-2]

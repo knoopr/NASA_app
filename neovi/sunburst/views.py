@@ -13,4 +13,4 @@ def index(request):
 def asterank_json(request):
     parser = Parser()
     json_Data = parser.hierJson
-    return HttpResponse(json.dumps(json_Data, indent=1, separators=(',', ': ')), content_type='application/json', )
+    return HttpResponse(json_Data, content_type='application/json', )
