@@ -90,8 +90,9 @@ class Parser:
         self.Grab_data()
 
     def Grab_data(self):
-        the_Data = Data_Grabber().Request_json("q>.005, q<.0075")
-        the_Data = Data_Grabber().Read_file()
+        the_Data = Data_Grabber().Request_json("q>.005, q<.01")
+        the_Data += Data_Grabber().Request_json("q<1, diameter>0")
+        the_Data += Data_Grabber().Read_file()
         """average_Q = 0
         for element in the_Data:
             average_Q += element["q"]
@@ -118,10 +119,18 @@ class Parser:
                 the_Century = 1900
             elif match("^20[0-9]{2}",element["first_obs"]) != None:
                 the_Century = 2000
-    
-    
+
             if element["diameter"] == "":
-                the_Size = "unknown"
+                try:
+                    element["diameter"] = element["est_diameter"]
+                    if element["diameter"] > 100:
+                        the_Size = "large"
+                    elif element["diameter"] > 15:
+                        the_Size = "medium"
+                    else:
+                        the_Size = "small"
+                except:
+                    the_Size = "unknown"
             elif element["diameter"] > 100:
                 the_Size = "large"
             elif element["diameter"] > 15:
