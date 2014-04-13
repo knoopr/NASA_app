@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from sunburst.Backend_parsing import Parser
+# from sunburst.Backend_parsing import Parser
 import json
 
 def index(request):
@@ -16,7 +16,6 @@ def asterank_json(request):
         # Path on heroku
         with open("neovi/sunburst/static/sunburst/json/Parser_Output.txt", "r") as fp:
             json_Data = json.load(fp)
-        break
     except FileNotFoundError:
         # Path on localhost
         with open("sunburst/static/sunburst/json/Parser_Output.txt", "r") as fp:
