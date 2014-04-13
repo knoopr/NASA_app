@@ -62,9 +62,11 @@ class Data_Grabber:
                 query += '"' + variable + '":' + """{"$e":""" + str(value) + "}"
         query += "}"
         get_Request = url + query + "&limit=1000"
-        json_Data = json.load(urlopen(get_Request))
-        #manager = PoolManager()
-        #json_Data = json.load(manager.urlopen(get_Request))
+        try{
+            manager = PoolManager()
+            json_Data = json.load(manager.urlopen(get_Request))
+        }
+        except:
         return json_Data
 
 
