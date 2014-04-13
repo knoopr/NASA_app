@@ -100,8 +100,8 @@ function mouseleave(d) {
 				d3.select(this).on("mouseover", mouseover);
 			});
 
-//	d3.select("#explanation").transition().duration(500).style("visibility",
-//			"hidden");
+	d3.select("#explanation").transition().duration(500).style("visibility",
+			"hidden");
 }
 
 // Given a node in a partition layout, return an array of all of its ancestor
