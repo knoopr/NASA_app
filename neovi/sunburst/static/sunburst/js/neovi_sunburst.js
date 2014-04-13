@@ -66,6 +66,8 @@ function mouseover(d) {
 				descriptionString += "are spectral type " + element.name;
 			} else if (element.feature == "discovery") {
 				descriptionString += "were discovered in the " + element.name;
+			} else if (element.feature == "size") {
+				descriptionString += "are of " + element.name + "size";
 			}
 			
 			// Oxford comma... yeah
