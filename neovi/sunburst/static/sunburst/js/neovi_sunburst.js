@@ -30,7 +30,9 @@ var arc = d3.svg.arc().startAngle(function(d) {
 d3.json("/sunburst/asterank_json", function(error, root) {
 	var path = svg.datum(root).selectAll("path").data(partition.nodes).enter()
 			.append("path").attr("display", function(d) {
-				return d.depth ? null : "none";
+				if (d.depth == 0 || d.depth == 4) {
+					return "none";
+				}
 			}) // hide inner ring
 			.attr("d", arc).style("stroke", "#fff").style("fill",
 					function(d) {
